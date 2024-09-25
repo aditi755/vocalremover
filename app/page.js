@@ -1,6 +1,6 @@
 
 'use client';
-import { MantineProvider, Title, Center, List, Button, AppShell, Box, Text } from '@mantine/core';
+import { MantineProvider, Title, Center, List, Button, AppShell, Box, Text, MediaQuery } from '@mantine/core';
 import { useRef, useState, useEffect } from 'react';
 import Sidebar from './components/AudioCutterNavbar';
 import WaveSurfer from 'wavesurfer.js'; 
@@ -10,7 +10,7 @@ export default function Page() {
   const waveformRef = useRef(null);
   const waveSurferInstance = useRef(null);  
   const fileInputRef = useRef(null);
-
+  const [navbarOpened, setNavbarOpened] = useState(false); 
   // Function to handle file selection
   const handleFileChange = (event) => {
     const selectedFile = event.target.files ? event.target.files[0] : null;
@@ -89,20 +89,23 @@ export default function Page() {
       >
         <AppShell.Navbar>
           <Sidebar />
+          {/* <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+            <Sidebar />
+          </MediaQuery> */}
         </AppShell.Navbar>
       </AppShell>
 
       <Center style={{ width: '100vw', height: '100vh', backgroundColor: '#17171e', display: "flex", flexDirection: "column" }}>
         <List style={{ display: "flex", listStyle: "none", gap: "40px", color: "white", fontSize: "30px" }}>
           <a href="#how-to-cut-audio" style={{ color: 'white', textDecoration: 'none' }}>
-            <Title order={4}>HOW IT WORKS</Title>
+            <Title order={6}>HOW IT WORKS</Title>
           </a>
-          <Title order={4}>JOINER</Title>
+          <Title order={6}>JOINER</Title>
         </List>
 
-        <Title order={1} style={{ color: 'white', marginTop: "30px" }}>Audio Cutter</Title>
+        <Title order={1} style={{ color: 'white', marginTop: "38px", fontSize:"43px" }}>Audio Cutter</Title>
 
-        <Title order={3} style={{ color: 'white', marginTop: "20px", textAlign: "center", fontSize: "18px", padding: "0 30px" }}>
+        <Title order={5} style={{ color: 'white', marginTop: "20px", textAlign: "center", fontSize: "24px", fontWeight:"400", padding: "0 30px" }}>
           Free editor to trim and cut any audio file online
         </Title>
 
