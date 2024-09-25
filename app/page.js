@@ -1,95 +1,230 @@
-import Image from "next/image";
-import styles from "./page.module.css";
 
-export default function Home() {
+'use client';
+import { MantineProvider, Title, Center, List, Button, AppShell, Box, Text } from '@mantine/core';
+import { useRef, useState, useEffect } from 'react';
+import Sidebar from './components/AudioCutterNavbar';
+import WaveSurfer from 'wavesurfer.js'; 
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js'
+export default function Page() {
+  const [file, setFile] = useState(null);
+  const waveformRef = useRef(null);
+  const waveSurferInstance = useRef(null);  
+  const fileInputRef = useRef(null);
+
+  // Function to handle file selection
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files ? event.target.files[0] : null;
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
+
+  const handleBrowseClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const togglePlayPause = () => {
+    if (waveSurferInstance.current) {
+      waveSurferInstance.current.playPause();
+    }
+  };
+
+  useEffect(() => {
+    // Create WaveSurfer instance when the file is selected
+    if (file && waveformRef.current) {
+      if (!waveSurferInstance.current) {
+        waveSurferInstance.current = WaveSurfer.create({
+          container: waveformRef.current,
+          waveColor: '#b2b2b2',
+          progressColor: '#665dc3',
+          cursorColor: '#ffffff',
+          barWidth: 2,
+          height: 100,
+          responsive: true,
+          hideScrollbar: true,
+        });
+      }
+
+      // Load the audio file into WaveSurfer
+      const audioURL = URL.createObjectURL(file);
+      waveSurferInstance.current.load(audioURL);
+
+      waveSurferInstance.current.on('ready', () => {
+        console.log("WaveSurfer audio ready to play");
+      });
+
+      waveSurferInstance.current.on('error', (err) => {
+        console.error("WaveSurfer load error:", err);
+      });
+    }
+
+    // Cleanup on component unmount
+    return () => {
+      if (waveSurferInstance.current) {
+        waveSurferInstance.current.destroy();
+      }
+    };
+  }, [file]); // Re-run when a new file is selected
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
+    <MantineProvider 
+      theme={{ defaultRadius: 'sm' }} 
+      withGlobalStyles
+      withNormalizeCSS
+    >
+      <AppShell
+        padding="sm"
+        navbar={{
+          width: 100,
+          breakpoint: 'sm',
+        }}
+        styles={(theme) => ({
+          navbar: {
+            backgroundColor: '#1c1c26',
+            color: theme.white,
+          },
+        })}
+      >
+        <AppShell.Navbar>
+          <Sidebar />
+        </AppShell.Navbar>
+      </AppShell>
+
+      <Center style={{ width: '100vw', height: '100vh', backgroundColor: '#17171e', display: "flex", flexDirection: "column" }}>
+        <List style={{ display: "flex", listStyle: "none", gap: "40px", color: "white", fontSize: "30px" }}>
+          <a href="#how-to-cut-audio" style={{ color: 'white', textDecoration: 'none' }}>
+            <Title order={4}>HOW IT WORKS</Title>
           </a>
-        </div>
-      </div>
+          <Title order={4}>JOINER</Title>
+        </List>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+        <Title order={1} style={{ color: 'white', marginTop: "30px" }}>Audio Cutter</Title>
+
+        <Title order={3} style={{ color: 'white', marginTop: "20px", textAlign: "center", fontSize: "18px", padding: "0 30px" }}>
+          Free editor to trim and cut any audio file online
+        </Title>
+
+        {/* Hidden FileInput */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          style={{ display: 'none' }}
+          accept="audio/*"
+          onChange={handleFileChange}
         />
-      </div>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+        {/* Button to trigger file upload */}
+        <Button 
+          variant="outline" 
+          size="lg" 
+          style={{
+            marginTop: "30px", 
+            backgroundColor: 'transparent', 
+            color: 'white', 
+            borderColor: '#665dc3', 
+            borderRadius: "50px",
+            fontSize: "18px", 
+            padding: "12px 24px", 
+          }}
+          onClick={handleBrowseClick}
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+          Browse my files
+        </Button>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+        {file && (
+          <Box style={{ marginTop: '20px', width: '80%' }}>
+            <Text style={{ color: 'white', marginBottom: '10px' }}>
+              Selected file: {file.name}
+            </Text>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
+            {/* Waveform container */}
+            <div ref={waveformRef} style={{ width: '100%', height: '100px', backgroundColor: '#1c1c26', borderRadius: '8px' }} />
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+            {/* Play/Pause button */}
+           
+            <Button 
+              variant="outline" 
+              size="md" 
+              style={{
+                marginTop: "20px", 
+                backgroundColor: 'transparent', 
+                color: 'white', 
+                borderColor: '#665dc3', 
+                borderRadius: "50px",
+                fontSize: "18px", 
+                padding: "12px 24px", 
+              }}
+              onClick={togglePlayPause}
+            >
+              Play / Pause
+            </Button>
+
+            <Button 
+              variant="outline" 
+              size="md" 
+              style={{
+                marginLeft:"800px",
+                marginTop: "20px", 
+                backgroundColor: 'transparent', 
+                color: 'white', 
+                borderColor: '#665dc3', 
+                borderRadius: "50px",
+                fontSize: "18px", 
+                padding: "12px 24px", 
+              }}
+              onClick={togglePlayPause}
+            >
+             Cut
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="md" 
+              style={{
+                marginLeft:"900px",
+                marginTop: "20px", 
+                backgroundColor: 'transparent', 
+                color: 'white', 
+                borderColor: '#665dc3', 
+                borderRadius: "50px",
+                fontSize: "18px", 
+                padding: "12px 24px", 
+              }}
+              onClick={togglePlayPause}
+            >
+             Remove
+            </Button>
+          
+          </Box>
+        )}
+      </Center>
+
+      <Box style={{ overflowX: "hidden", backgroundColor: "#17171e", width: "100vw", padding: "30px" }}>
+        <Title order={2} id="how-to-cut-audio" style={{ color: 'white', marginTop: "30px", marginLeft: "140px" }}>
+          How to cut audio
+        </Title>
+
+        <Box 
+          bg="#1c1c26" 
+          my="md" 
+          component="div" 
+          style={{ marginLeft: "150px", padding: "20px", borderRadius: "8px" }}
         >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+          <Title order={4} style={{ color: "white", marginBottom: "10px", fontWeight: 400, fontSize: "20px" }}>
+            This app can be used to trim and/or cut audio tracks, remove audio fragments. Fade in and fade out your music easily to make the audio harmoniously.
+          </Title>
+
+          <Title order={4} style={{ display: 'block', marginTop: "20px", marginBottom: "10px", color: "white", fontWeight: 400, fontSize: "20px" }}>
+            It is fast and easy to use. You can save the audio file in any format (codec parameters are configured).
+          </Title>
+
+          <Title order={4} style={{ display: 'block', marginTop: "20px", color: "white", fontWeight: 400, fontSize: "20px" }}>
+            It works directly in the browser; no need to install any software, and it is available for mobile devices.
+          </Title>
+        </Box>
+      </Box>
+    </MantineProvider>
   );
 }
