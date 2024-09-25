@@ -41,7 +41,7 @@ export default function Page() {
           progressColor: '#665dc3',
           cursorColor: '#ffffff',
           barWidth: 2,
-          height: 100,
+          height: 170,
           responsive: true,
           hideScrollbar: true,
         });
@@ -94,49 +94,50 @@ export default function Page() {
           </MediaQuery> */}
         </AppShell.Navbar>
       </AppShell>
-
       <Center style={{ width: '100vw', height: '100vh', backgroundColor: '#17171e', display: "flex", flexDirection: "column" }}>
-        <List style={{ display: "flex", listStyle: "none", gap: "40px", color: "white", fontSize: "30px" }}>
-          <a href="#how-to-cut-audio" style={{ color: 'white', textDecoration: 'none' }}>
-            <Title order={6}>HOW IT WORKS</Title>
-          </a>
-          <Title order={6}>JOINER</Title>
-        </List>
+        {!file ? (
+          <>
+            <List style={{ display: "flex", listStyle: "none", gap: "40px", color: "white", fontSize: "30px" }}>
+              <a href="#how-to-cut-audio" style={{ color: 'white', textDecoration: 'none' }}>
+                <Title order={6}>HOW IT WORKS</Title>
+              </a>
+              <Title order={6}>JOINER</Title>
+            </List>
 
-        <Title order={1} style={{ color: 'white', marginTop: "38px", fontSize:"43px" }}>Audio Cutter</Title>
+            <Title order={1} style={{ color: 'white', marginTop: "38px", fontSize:"43px" }}>Audio Cutter</Title>
 
-        <Title order={5} style={{ color: 'white', marginTop: "20px", textAlign: "center", fontSize: "24px", fontWeight:"400", padding: "0 30px" }}>
-          Free editor to trim and cut any audio file online
-        </Title>
+            <Title order={5} style={{ color: 'white', marginTop: "20px", textAlign: "center", fontSize: "24px", fontWeight:"400", padding: "0 30px" }}>
+              Free editor to trim and cut any audio file online
+            </Title>
 
-        {/* Hidden FileInput */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          style={{ display: 'none' }}
-          accept="audio/*"
-          onChange={handleFileChange}
-        />
+            {/* Hidden FileInput */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              style={{ display: 'none' }}
+              accept="audio/*"
+              onChange={handleFileChange}
+            />
 
-        {/* Button to trigger file upload */}
-        <Button 
-          variant="outline" 
-          size="lg" 
-          style={{
-            marginTop: "30px", 
-            backgroundColor: 'transparent', 
-            color: 'white', 
-            borderColor: '#665dc3', 
-            borderRadius: "50px",
-            fontSize: "18px", 
-            padding: "12px 24px", 
-          }}
-          onClick={handleBrowseClick}
-        >
-          Browse my files
-        </Button>
-
-        {file && (
+            {/* Button to trigger file upload */}
+            <Button 
+              variant="outline" 
+              size="lg" 
+              style={{
+                marginTop: "30px", 
+                backgroundColor: 'transparent', 
+                color: 'white', 
+                borderColor: '#665dc3', 
+                borderRadius: "50px",
+                fontSize: "18px", 
+                padding: "12px 24px", 
+              }}
+              onClick={handleBrowseClick}
+            >
+              Browse my files
+            </Button>
+          </>
+        ) : (
           <Box style={{ marginTop: '20px', width: '80%' }}>
             <Text style={{ color: 'white', marginBottom: '10px' }}>
               Selected file: {file.name}
@@ -146,12 +147,11 @@ export default function Page() {
             <div ref={waveformRef} style={{ width: '100%', height: '100px', backgroundColor: '#1c1c26', borderRadius: '8px' }} />
 
             {/* Play/Pause button */}
-           
             <Button 
               variant="outline" 
               size="md" 
               style={{
-                marginTop: "20px", 
+                marginTop: "98px", 
                 backgroundColor: 'transparent', 
                 color: 'white', 
                 borderColor: '#665dc3', 
@@ -168,8 +168,8 @@ export default function Page() {
               variant="outline" 
               size="md" 
               style={{
-                marginLeft:"800px",
-                marginTop: "20px", 
+                marginLeft: "20px",
+                marginTop: "98px", 
                 backgroundColor: 'transparent', 
                 color: 'white', 
                 borderColor: '#665dc3', 
@@ -177,17 +177,17 @@ export default function Page() {
                 fontSize: "18px", 
                 padding: "12px 24px", 
               }}
-              onClick={togglePlayPause}
+              onClick={() => {/* Handle cut action */}}
             >
-             Cut
+              Cut
             </Button>
-            
+
             <Button 
               variant="outline" 
               size="md" 
               style={{
-                marginLeft:"900px",
-                marginTop: "20px", 
+                marginLeft: "20px",
+                marginTop: "98px", 
                 backgroundColor: 'transparent', 
                 color: 'white', 
                 borderColor: '#665dc3', 
@@ -195,17 +195,16 @@ export default function Page() {
                 fontSize: "18px", 
                 padding: "12px 24px", 
               }}
-              onClick={togglePlayPause}
+              onClick={() => {/* Handle remove action */}}
             >
-             Remove
+              Remove
             </Button>
-          
           </Box>
         )}
       </Center>
 
       <Box style={{ overflowX: "hidden", backgroundColor: "#17171e", width: "100vw", padding: "30px" }}>
-        <Title order={2} id="how-to-cut-audio" style={{ color: 'white', marginTop: "30px", marginLeft: "140px" }}>
+        <Title order={2} id="how-to-cut-audio" style={{ color: 'white', marginTop: "30px", marginLeft: "150px", fontWeight:"400", fontSize:"40px"}}>
           How to cut audio
         </Title>
 
@@ -227,6 +226,23 @@ export default function Page() {
             It works directly in the browser; no need to install any software, and it is available for mobile devices.
           </Title>
         </Box>
+
+
+        <Title order={4} id="how-to-cut-audio" style={{ color: 'white', marginTop: "30px", marginLeft: "150px", fontWeight:"300", fontSize:"30px"}}>
+         Privacy and Security Guranteed
+        </Title>
+
+        <Box 
+          bg="#1c1c26" 
+          my="md" 
+          component="div" 
+          style={{ marginLeft: "150px", padding: "20px", borderRadius: "8px" }}
+        >
+          <Title order={4} style={{ color: "white", marginBottom: "10px", fontWeight: 400, fontSize: "20px" }}>
+          This is serverless app. Your files does not leave your device
+          </Title>
+</Box>
+
       </Box>
     </MantineProvider>
   );
